@@ -66,7 +66,7 @@
 (require 'init-hippie-expand)
 (require 'init-company)
 (require 'init-windows)
-(require 'init-sessions)
+;;(require 'init-sessions)	;;disable desktop-save-mode
 (require 'init-fonts)
 (require 'init-mmm)
 
