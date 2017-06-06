@@ -2,11 +2,13 @@
 ;;(require-package 'color-theme-sanityinc-tomorrow)
 
 ;; autoload dracula-theme
-(add-to-list 'custom-theme-load-path "~/.emacs.d/lisp/custom-themes")
+(if window-system
+	(add-to-list 'custom-theme-load-path "~/.emacs.d/lisp/custom-themes"))
 ;;(load-theme 'dracula t)
 
 ;; If you don't customize it, this is the theme you get.
-(setq-default custom-enabled-themes '(dracula))
+(if window-system
+	(setq-default custom-enabled-themes '(dracula)))
 
 ;; Ensure that themes will be applied even if they have not been customized
 (defun reapply-themes ()
