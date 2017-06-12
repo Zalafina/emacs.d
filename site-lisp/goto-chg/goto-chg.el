@@ -100,10 +100,10 @@ Optional third argument is the replacement, which defaults to \"...\"."
       str
     ;; else
     (let* ((lipsis (or ellipsis "..."))
-	   (i (/ (- maxlen (length lipsis)) 2)))
+           (i (/ (- maxlen (length lipsis)) 2)))
       (concat (substring str 0 i)
-	      lipsis 
-	      (substring str (- i))))))
+              lipsis
+              (substring str (- i))))))
 
 (defun glc-adjust-pos2 (pos p1 p2 adj)
   ;; Helper function to glc-adjust-pos
@@ -175,21 +175,21 @@ Return nil if E represents no real change.
 \nE is an entry in the buffer-undo-list."
   (let ((nn (or (format "T-%d: " n) "")))
     (cond ((numberp e) "New position")	; num==changed position
-	  ((atom e) nil)		; nil==command boundary
-	  ((numberp (car e))		; (beg . end)==insertion
-	   (if (and n (< n 2))
-	       (format "%sInserted %d chars \"%s\"" nn (- (cdr e) (car e)) 
-		       (glc-center-ellipsis (buffer-substring (car e) (cdr e)) 60))
-	     ;; else
-	     ;; An older insert. The inserted text cannot easily be computed.
-	     ;; Just show the char count.
-	     (format "%sInserted %d chars" nn (- (cdr e) (car e)))))
-	  ((stringp (car e))		; (string . pos)==deletion
-	   (format "%sDeleted \"%s\"" nn (glc-center-ellipsis (car e) 60)))
-	  ((null (car e))		; (nil ...)==text property change
-	   (format "%sProperty change" nn))
-	  ((atom (car e)) nil)		; (t ...)==file modification time
-	  (t nil))))			; (marker ...)==marker moved
+          ((atom e) nil)		; nil==command boundary
+          ((numberp (car e))		; (beg . end)==insertion
+           (if (and n (< n 2))
+               (format "%sInserted %d chars \"%s\"" nn (- (cdr e) (car e))
+                       (glc-center-ellipsis (buffer-substring (car e) (cdr e)) 60))
+             ;; else
+             ;; An older insert. The inserted text cannot easily be computed.
+             ;; Just show the char count.
+             (format "%sInserted %d chars" nn (- (cdr e) (car e)))))
+          ((stringp (car e))		; (string . pos)==deletion
+           (format "%sDeleted \"%s\"" nn (glc-center-ellipsis (car e) 60)))
+          ((null (car e))		; (nil ...)==text property change
+           (format "%sProperty change" nn))
+          ((atom (car e)) nil)		; (t ...)==file modification time
+          (t nil))))			; (marker ...)==marker moved
 
 (defun glc-is-positionable (e)
   "Return non-nil if E is an insertion, deletion or text property change.
@@ -203,7 +203,7 @@ that is, it was previously saved or unchanged. Nil otherwise."
 
 ;;;###autoload
 (defun goto-last-change (arg)
-"Go to the point where the last edit was made in the current buffer.
+  "Go to the point where the last edit was made in the current buffer.
 Repeat the command to go to the second last edit, etc.
 \nTo go back to more recent edit, the reverse of this command, use \\[goto-last-change-reverse]
 or precede this command with \\[universal-argument] - (minus).
@@ -224,72 +224,72 @@ At times, when undo information becomes too large, the oldest information is
 discarded. See variable `undo-limit'."
   (interactive "P")
   (cond ((not (eq this-command last-command))
-	 ;; Start a glc sequence
-	 ;; Don't go to current point if last command was an obvious edit
-	 ;; (yank or self-insert, but not kill-region). Makes it easier to
-	 ;; jump back and forth when copying seleced lines.
-	 (setq glc-probe-depth (if (memq last-command '(yank self-insert-command)) 1 0)
-	       glc-direction 1
-	       glc-current-span glc-default-span)
-	 (if (< (prefix-numeric-value arg) 0)
-	     (error "Negative arg: Cannot reverse as the first operation"))))
+         ;; Start a glc sequence
+         ;; Don't go to current point if last command was an obvious edit
+         ;; (yank or self-insert, but not kill-region). Makes it easier to
+         ;; jump back and forth when copying seleced lines.
+         (setq glc-probe-depth (if (memq last-command '(yank self-insert-command)) 1 0)
+               glc-direction 1
+               glc-current-span glc-default-span)
+         (if (< (prefix-numeric-value arg) 0)
+             (error "Negative arg: Cannot reverse as the first operation"))))
   (cond ((null buffer-undo-list)
-	 (error "Buffer has not been changed"))
-	((eq buffer-undo-list t)
-	 (error "No change info (undo is disabled)")))
+         (error "Buffer has not been changed"))
+        ((eq buffer-undo-list t)
+         (error "No change info (undo is disabled)")))
   (cond ((numberp arg)			; Numeric arg sets span
-	 (setq glc-current-span (abs arg)))
-	((consp arg)			; C-u's multiply previous span by 4
-	 (setq glc-current-span (* (abs (car arg)) glc-default-span))
-	 (message "Current span is %d chars" glc-current-span))) ;todo: keep message with "waiting" and "is saved"
+         (setq glc-current-span (abs arg)))
+        ((consp arg)			; C-u's multiply previous span by 4
+         (setq glc-current-span (* (abs (car arg)) glc-default-span))
+         (message "Current span is %d chars" glc-current-span))) ;todo: keep message with "waiting" and "is saved"
   (cond ((< (prefix-numeric-value arg) 0)
-	 (setq glc-direction -1))
-	(t
-	 (setq glc-direction 1)))
+         (setq glc-direction -1))
+        (t
+         (setq glc-direction 1)))
   (let (rev				; Reversed (and filtered) undo list
-	pos				; The pos we look for, nil until found
-	(n 0)				; Steps in undo list (length of 'rev')
-	(l buffer-undo-list) 
-	(passed-save-entry (not (buffer-modified-p)))
-	(new-probe-depth glc-probe-depth))
+        pos				; The pos we look for, nil until found
+        (n 0)				; Steps in undo list (length of 'rev')
+        (l buffer-undo-list)
+        (passed-save-entry (not (buffer-modified-p)))
+        (new-probe-depth glc-probe-depth))
     ;; Walk back and forth in the buffer-undo-list, each time one step deeper,
     ;; until we can walk back the whole list with a 'pos' that is not coming
     ;; too close to another edit.
     (while (null pos)
       (setq new-probe-depth (+ new-probe-depth glc-direction))
       (if (< glc-direction 0)
-	  (setq rev ()
-		n 0
-		l buffer-undo-list
-		passed-save-entry (not (buffer-modified-p))))
+          (setq rev ()
+                n 0
+                l buffer-undo-list
+                passed-save-entry (not (buffer-modified-p))))
       (if (< new-probe-depth 1)
-	  (error "No later change info"))
+          (error "No later change info"))
       (if (> n 150)
-	  (message "working..."))
+          (message "working..."))
       ;; Walk forward in buffer-undo-list, glc-probe-depth steps.
       ;; Build reverse list along the way
       (while (< n new-probe-depth)
-	(cond ((null l)
-	       ;(setq this-command t)	; Disrupt repeat sequence
-	       (error "No further change info"))
-	      ((glc-is-positionable (car l))
-	       (setq n (1+ n)
-		     rev (cons (car l) rev)))
-	      ((or passed-save-entry (glc-is-filetime (car l)))
-	       (setq passed-save-entry t)))
-	(setq l (cdr l)))
+        (cond ((null l)
+                                        ;(setq this-command t)	; Disrupt repeat sequence
+               (error "No further change info"))
+              ((glc-is-positionable (car l))
+               (setq n (1+ n)
+                     rev (cons (car l) rev)))
+              ((or passed-save-entry (glc-is-filetime (car l)))
+               (setq passed-save-entry t)))
+        (setq l (cdr l)))
       ;; Walk back in reverse list, from older to newer edits.
       ;; Adjusting pos along the way.
       (setq pos (glc-adjust-list rev)))
     ;; Found a place not previously visited, in 'pos'.
     ;; (An error have been issued if nothing (more) found.)
     (if (> n 150)
-	(message nil))			; remove message "working..."
+        (message nil))			; remove message "working..."
     (if (and (= glc-current-span 0) (glc-get-descript (car rev) n))
-	(message "%s" (glc-get-descript (car rev) n))
+        (message "%s" (glc-get-descript (car rev) n))
       ;; else
       (if passed-save-entry
-	  (message "(This change is saved)")))
+          (message "(This change is saved)")))
     (setq glc-probe-depth new-probe-depth)
     (goto-char pos)))
 
