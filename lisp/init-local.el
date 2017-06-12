@@ -42,9 +42,23 @@
 (if window-system
     (global-hl-line-mode t))
 
-
 ;; set default woking directory(C-x C-f/C-x C-v)
 ;;(setq default-directory "~/work/")
+;;(setq insert-default-directory "~/work/")
+
+
+(require 'goto-chg)
+(global-set-key (kbd "<M-left>") 'goto-last-change)
+(global-set-key (kbd "<M-right>") 'goto-last-change-reverse)
+(global-set-key (kbd "M-s <M-left>") 'goto-last-change)
+(global-set-key (kbd "M-s <M-right>]") 'goto-last-change-reverse)
+
+;;; Custom Key Binding >>>
+;;(global-set-key (kbd "C-S-j") 'windmove-down)
+;;(global-set-key (kbd "C-S-k") 'windmove-up)
+;;(global-set-key (kbd "C-S-h") 'windmove-left)
+;;(global-set-key (kbd "C-S-l") 'windmove-right)
+;;; Custom Key Binding <<<
 
 ;;; ######## My Own Custom Settings <<<
 

@@ -103,9 +103,9 @@
    `(company-tooltip-mouse ((,class (:inherit highlight))))
    `(company-tooltip-selection ((,class (:background ,bg3 :foreground ,fg3))))
    ;; diff-hl
-   `(diff-hl-change ((,class (:foreground ,rainbow-5 :background ,rainbow-5))))
+   `(diff-hl-change ((,class (:foreground ,rainbow-6 :background ,rainbow-6))))
    `(diff-hl-delete ((,class (:foreground ,rainbow-9 :background ,rainbow-9))))
-   `(diff-hl-insert ((,class (:foreground ,rainbow-6 :background ,rainbow-6))))
+   `(diff-hl-insert ((,class (:foreground ,rainbow-2 :background ,rainbow-2))))
    ;; enh-ruby
    `(enh-ruby-heredoc-delimiter-face ((,class (:foreground ,str))))
    `(enh-ruby-op-face ((,class (:foreground ,keyword))))
