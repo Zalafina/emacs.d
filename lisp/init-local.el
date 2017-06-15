@@ -21,6 +21,9 @@
 ;; modify the cursor to a vertical line
 (setq-default cursor-type 'bar)
 
+;; disable auto save mode
+(setq auto-save-default nil)
+
 ;; display line number with "linum-mode"
 ;;(global-linum-mode t)
 ;;(setq linum-format "%d: ")
